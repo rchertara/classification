@@ -120,9 +120,10 @@ def readlines(filename):
   "Opens a file or reads it from the zip archive data.zip"
   if(os.path.exists(filename)): 
     return [l[:-1] for l in open(filename).readlines()]
-  else: 
+  else:
 
-    return open(filename,'rb').split('\n')
+    z = zipfile.ZipFile('data.zip')
+    return z.read(filename).split('\n')
     
 def loadLabelsFile(filename, n):
   """
@@ -172,13 +173,12 @@ def convertToInteger(data):
 def _test():
   import doctest
   doctest.testmod() # Test the interactive sessions in function comments
-  n = 1
+  n = 10
 #  items = loadDataFile("facedata/facedatatrain", n,60,70)
 #  labels = loadLabelsFile("facedata/facedatatrainlabels", n)
   items = loadDataFile("data/digitdata/trainingimages", n,28,28)
   labels = loadLabelsFile("data/digitdata/traininglabels", n)
-  for i in range(1):
-    print (items[i])
+  for i in range(n):
     print (items[i])
     print (items[i].height)
     print (items[i].width)
