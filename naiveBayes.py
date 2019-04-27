@@ -30,7 +30,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     """
     self.k = k
 
-  def train(self, trainingData, trainingLabels, validationData, validationLabels):
+  def train(self, trainingData, trainingLabels, validationData, validationLabels,options):
     """
     Outside shell to call your method. Do not modify this method.
     """  
@@ -45,9 +45,9 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     else:
         kgrid = [self.k]
         
-    self.trainAndTune(trainingData, trainingLabels, validationData, validationLabels, kgrid)
+    self.trainAndTune(trainingData, trainingLabels, validationData, validationLabels, kgrid,options)
       
-  def trainAndTune(self, trainingData, trainingLabels, validationData, validationLabels, kgrid):
+  def trainAndTune(self, trainingData, trainingLabels, validationData, validationLabels, kgrid,options):
     """
     Trains the classifier by collecting counts over the training data, and
     stores the Laplace smoothed estimates so that they can be used to classify.
@@ -61,10 +61,18 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     self.legalLabels.
 
     """
+
     self.classProb={}
     self.classOccurence={}
+    self.allFeaturesProb = {}
+    numOfClasses=0
+    if(options=='digits'):
+      numOfClasses=10
+    else:
+      numOfClasses=2
+
     occur=0
-    for digit in range(10):
+    for digit in range(numOfClasses):
       for x in range(len(trainingLabels)):
         if(trainingLabels[x]==digit):
           occur+=1
@@ -72,12 +80,9 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
       self.classProb[digit]=float(occur)/float(len(trainingLabels))
       occur=0
 
-
-
-    self.allFeaturesProb={}
-
+    #--------------------------------------------------------------above is prob of a class,below prob of a feature for a class
     occurOfOne=0
-    for digit in range(10):#for each class
+    for digit in range(numOfClasses):#for each class
       self.allFeaturesProb[digit] = {}
       for x in range(28): #each (x,y) is a feature
         for y in range(28):
@@ -85,21 +90,18 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
             if(trainingLabels[z]==digit):
               image=trainingData[z]#get that specific image
               if(image.get((x,y))==1):#check to see if pixel for this image is a 1
-                 occurOfOne+=1
+                occurOfOne+=1
 
           self.allFeaturesProb[digit][(x,y)] =float(occurOfOne)/float(self.classOccurence[digit])# idk if i need these denomineters of if this is right denom
           occurOfOne=0
 
 
 
-    return
-
-
 
 
 
         
-  def classify(self, testData):
+  def classify(self, testData,options):
     """
     Classify the data based on the posterior distribution over labels.
     
@@ -108,12 +110,12 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     guesses = []
     self.posteriors = [] # Log posteriors are stored for later data analysis (autograder).
     for datum in testData:
-      posterior = self.calculateLogJointProbabilities(datum)
+      posterior = self.calculateLogJointProbabilities(datum,options)
       guesses.append(posterior.argMax())
       self.posteriors.append(posterior)
     return guesses
       
-  def calculateLogJointProbabilities(self, datum):
+  def calculateLogJointProbabilities(self, datum,options):
     """
     Returns the log-joint distribution over legal labels and the datum.
     Each log-probability should be stored in the log-joint counter, e.g.    
@@ -122,11 +124,18 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     To get the list of all possible features or labels, use self.features and 
     self.legalLabels.
     """
-    #CANT HAVE LOGS OF ZERO
-    self.k=.01 #this is so far best choice for k idk why
     logJoint = util.Counter()
+    numOfclasses=0
+    #CANT HAVE LOGS OF ZERO
+    if(options=='digits'):
+      numOfclasses=10;
+    else:
+      numOfclasses=2;
+
+    self.k=.01 #this is so far best choice for k idk why
+
     #NEED HELP WITH THIS NEED TO SET K correctly and confirm math
-    for digit in range(10):
+    for digit in range(numOfclasses):
       probOfClassAndFeature=math.log(self.classProb[digit]+self.k)
       for x in range(28):
         for y in range(28):
@@ -137,7 +146,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
       logJoint[digit]=probOfClassAndFeature
       probOfClassAndFeature=0
 
-    
+
     return logJoint
   
   def findHighOddsFeatures(self, label1, label2):

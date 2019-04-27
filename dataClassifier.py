@@ -17,7 +17,9 @@ import samples
 import sys
 import util
 
-TEST_SET_SIZE = 1000 #IMPORTANT#
+
+TRAIN_SET_SIZE=450
+TEST_SET_SIZE = 100 #IMPORTANT#
 DIGIT_DATUM_WIDTH=28
 DIGIT_DATUM_HEIGHT=28
 FACE_DATUM_WIDTH=60
@@ -167,7 +169,7 @@ def readCommand( argv ):
   
   parser.add_option('-c', '--classifier', help=default('The type of classifier'), choices=['mostFrequent', 'nb', 'naiveBayes', 'perceptron', 'mira', 'minicontest'], default='mostFrequent')
   parser.add_option('-d', '--data', help=default('Dataset to use'), choices=['digits', 'faces'], default='digits')
-  parser.add_option('-t', '--training', help=default('The size of the training set'), default=1000, type="int")
+  parser.add_option('-t', '--training', help=default('The size of the training set'), default=TRAIN_SET_SIZE, type="int")
   parser.add_option('-f', '--features', help=default('Whether to use enhanced features'), default=False, action="store_true")
   parser.add_option('-o', '--odds', help=default('Whether to compute odds ratios'), default=False, action="store_true")
   parser.add_option('-1', '--label1', help=default("First label in an odds ratio comparison"), default=0, type="int")
@@ -307,8 +309,8 @@ def runClassifier(args, options):
 
     #rahil edits below
 
-    mergedData = rawTrainingData + rawValidationData
-    mergedLabels=trainingLabels+validationLabels
+    #mergedData = rawTrainingData + rawValidationData
+    #mergedLabels=trainingLabels+validationLabels
 
     rawTestData = samples.loadDataFile("digitdata/testimages", numTest, DIGIT_DATUM_WIDTH, DIGIT_DATUM_HEIGHT)
     testLabels = samples.loadLabelsFile("digitdata/testlabels", numTest)
@@ -318,19 +320,19 @@ def runClassifier(args, options):
   print ("Extracting features...")
   trainingData = map(featureFunction, rawTrainingData)
   validationData = map(featureFunction, rawValidationData)
-  mergedData=map(featureFunction,mergedData)
+  #mergedData=map(featureFunction,mergedData)
 
   testData = map(featureFunction, rawTestData)
   
   # Conduct training and testing
   print ("Training...")
-  classifier.train(trainingData, trainingLabels, validationData, validationLabels)
+  classifier.train(trainingData, trainingLabels, validationData, validationLabels,options.data)
   print ("Validating...")
-  guesses = classifier.classify(validationData)
+  guesses = classifier.classify(validationData,options.data)
   correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
   print (str(correct), ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels)))
   print ("Testing...")
-  guesses = classifier.classify(testData)
+  guesses = classifier.classify(testData,options.data)
   correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
   print (str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * correct / len(testLabels)))
   analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
