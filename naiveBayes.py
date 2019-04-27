@@ -34,7 +34,8 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     """
     Outside shell to call your method. Do not modify this method.
     """  
-      
+    #WHAT IS KGRID#
+
     # might be useful in your code later...
     # this is a list of all features in the training set.
     self.features = list(set([ f for datum in trainingData for f in datum.keys() ]));
@@ -58,10 +59,45 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     
     To get the list of all possible features or labels, use self.features and 
     self.legalLabels.
-    """
 
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    """
+    self.classProb={}
+    self.classOccurence={}
+    occur=0
+    for digit in range(10):
+      for x in range(len(trainingLabels)):
+        if(trainingLabels[x]==digit):
+          occur+=1
+      self.classOccurence[digit]=occur
+      self.classProb[digit]=float(occur)/float(len(trainingLabels))
+      occur=0
+
+
+
+    self.allFeaturesProb={}
+
+    occurOfOne=0
+    for digit in range(10):#for each class
+      self.allFeaturesProb[digit] = {}
+      for x in range(28): #each (x,y) is a feature
+        for y in range(28):
+          for z in range(len(trainingLabels)):#check to see if image we are on is in the class
+            if(trainingLabels[z]==digit):
+              image=trainingData[z]#get that specific image
+              if(image.get((x,y))==1):#check to see if pixel for this image is a 1
+                 occurOfOne+=1
+
+          self.allFeaturesProb[digit][(x,y)] =float(occurOfOne)/float(self.classOccurence[digit])# idk if i need these denomineters of if this is right denom
+          occurOfOne=0
+
+
+
+    return
+
+
+
+
+
         
   def classify(self, testData):
     """
@@ -86,10 +122,21 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     To get the list of all possible features or labels, use self.features and 
     self.legalLabels.
     """
+    #CANT HAVE LOGS OF ZERO
+    self.k=.01 #this is so far best choice for k idk why
     logJoint = util.Counter()
-    
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #NEED HELP WITH THIS NEED TO SET K correctly and confirm math
+    for digit in range(10):
+      probOfClassAndFeature=math.log(self.classProb[digit]+self.k)
+      for x in range(28):
+        for y in range(28):
+          if(datum.get((x,y))==1):
+            probOfClassAndFeature+=math.log(self.allFeaturesProb[digit][(x,y)]+self.k)
+          else:
+            probOfClassAndFeature+=math.log(1-(self.allFeaturesProb[digit][(x, y)])+self.k)
+      logJoint[digit]=probOfClassAndFeature
+      probOfClassAndFeature=0
+
     
     return logJoint
   
