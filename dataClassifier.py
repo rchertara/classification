@@ -17,7 +17,7 @@ import samples
 import sys
 import util
 
-TEST_SET_SIZE = 100
+TEST_SET_SIZE = 1000 #IMPORTANT#
 DIGIT_DATUM_WIDTH=28
 DIGIT_DATUM_HEIGHT=28
 FACE_DATUM_WIDTH=60
@@ -167,7 +167,7 @@ def readCommand( argv ):
   
   parser.add_option('-c', '--classifier', help=default('The type of classifier'), choices=['mostFrequent', 'nb', 'naiveBayes', 'perceptron', 'mira', 'minicontest'], default='mostFrequent')
   parser.add_option('-d', '--data', help=default('Dataset to use'), choices=['digits', 'faces'], default='digits')
-  parser.add_option('-t', '--training', help=default('The size of the training set'), default=100, type="int")
+  parser.add_option('-t', '--training', help=default('The size of the training set'), default=TEST_SET_SIZE, type="int")
   parser.add_option('-f', '--features', help=default('Whether to use enhanced features'), default=False, action="store_true")
   parser.add_option('-o', '--odds', help=default('Whether to compute odds ratios'), default=False, action="store_true")
   parser.add_option('-1', '--label1', help=default("First label in an odds ratio comparison"), default=0, type="int")
@@ -300,11 +300,17 @@ def runClassifier(args, options):
     rawTestData = samples.loadDataFile("facedata/facedatatest", numTest,FACE_DATUM_WIDTH,FACE_DATUM_HEIGHT)
     testLabels = samples.loadLabelsFile("facedata/facedatatestlabels", numTest)
   else:
-    rawTrainingData = samples.loadDataFile("digitdata/trainingimages", numTraining,DIGIT_DATUM_WIDTH,DIGIT_DATUM_HEIGHT)
+    rawTrainingData = samples.loadDataFile("digitdata/trainingimages", numTraining, DIGIT_DATUM_WIDTH, DIGIT_DATUM_HEIGHT)
     trainingLabels = samples.loadLabelsFile("digitdata/traininglabels", numTraining)
-    rawValidationData = samples.loadDataFile("digitdata/validationimages", numTest,DIGIT_DATUM_WIDTH,DIGIT_DATUM_HEIGHT)
+    rawValidationData = samples.loadDataFile("digitdata/validationimages", numTest, DIGIT_DATUM_WIDTH, DIGIT_DATUM_HEIGHT)
     validationLabels = samples.loadLabelsFile("digitdata/validationlabels", numTest)
-    rawTestData = samples.loadDataFile("digitdata/testimages", numTest,DIGIT_DATUM_WIDTH,DIGIT_DATUM_HEIGHT)
+
+    #rahil edits below
+
+    mergedData = rawTrainingData + rawValidationData
+    mergedLabels=trainingLabels+validationLabels
+
+    rawTestData = samples.loadDataFile("digitdata/testimages", numTest, DIGIT_DATUM_WIDTH, DIGIT_DATUM_HEIGHT)
     testLabels = samples.loadLabelsFile("digitdata/testlabels", numTest)
     
   
@@ -312,6 +318,8 @@ def runClassifier(args, options):
   print ("Extracting features...")
   trainingData = map(featureFunction, rawTrainingData)
   validationData = map(featureFunction, rawValidationData)
+  mergedData=map(featureFunction,mergedData)
+
   testData = map(featureFunction, rawTestData)
   
   # Conduct training and testing

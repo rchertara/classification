@@ -1,10 +1,3 @@
-# samples.py
-# ----------
-# Licensing Information: Please do not distribute or publish solutions to this
-# project. You are free to use and extend these projects for educational
-# purposes. The Pacman AI projects were developed at UC Berkeley, primarily by
-# John DeNero (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
-# For more info, see http://inst.eecs.berkeley.edu/~cs188/sp09/pacman.html
 
 import util
 
@@ -17,45 +10,45 @@ DATUM_HEIGHT = 0  # in pixels
 
 class Datum:
     """
-    A datum is a pixel-level encoding of digits or face/non-face edge maps.
+  A datum is a pixel-level encoding of digits or face/non-face edge maps.
 
-    Digits are from the MNIST dataset and face images are from the
-    easy-faces and background categories of the Caltech 101 dataset.
+  Digits are from the MNIST dataset and face images are from the
+  easy-faces and background categories of the Caltech 101 dataset.
 
 
-    Each digit is 28x28 pixels, and each face/non-face image is 60x74
-    pixels, each pixel can take the following values:
-      0: no edge (blank)
-      1: gray pixel (+) [used for digits only]
-      2: edge [for face] or black pixel [for digit] (#)
+  Each digit is 28x28 pixels, and each face/non-face image is 60x74
+  pixels, each pixel can take the following values:
+    0: no edge (blank)
+    1: gray pixel (+) [used for digits only]
+    2: edge [for face] or black pixel [for digit] (#)
 
-    Pixel data is stored in the 2-dimensional array pixels, which
-    maps to pixels on a plane according to standard euclidean axes
-    with the first dimension denoting the horizontal and the second
-    the vertical coordinate:
+  Pixel data is stored in the 2-dimensional array pixels, which
+  maps to pixels on a plane according to standard euclidean axes
+  with the first dimension denoting the horizontal and the second
+  the vertical coordinate:
 
-      28 # # # #      #  #
-      27 # # # #      #  #
-       .
-       .
-       .
-       3 # # + #      #  #
-       2 # # # #      #  #
-       1 # # # #      #  #
-       0 # # # #      #  #
-         0 1 2 3 ... 27 28
+    28 # # # #      #  #
+    27 # # # #      #  #
+     .
+     .
+     .
+     3 # # + #      #  #
+     2 # # # #      #  #
+     1 # # # #      #  #
+     0 # # # #      #  #
+       0 1 2 3 ... 27 28
 
-    For example, the + in the above diagram is stored in pixels[2][3], or
-    more generally pixels[column][row].
+  For example, the + in the above diagram is stored in pixels[2][3], or
+  more generally pixels[column][row].
 
-    The contents of the representation can be accessed directly
-    via the getPixel and getPixels methods.
-    """
+  The contents of the representation can be accessed directly
+  via the getPixel and getPixels methods.
+  """
 
     def __init__(self, data, width, height):
         """
-        Create a new datum from file input (standard MNIST encoding).
-        """
+    Create a new datum from file input (standard MNIST encoding).
+    """
         DATUM_HEIGHT = height
         DATUM_WIDTH = width
         self.height = DATUM_HEIGHT
@@ -66,20 +59,20 @@ class Datum:
 
     def getPixel(self, column, row):
         """
-        Returns the value of the pixel at column, row as 0, or 1.
-        """
+    Returns the value of the pixel at column, row as 0, or 1.
+    """
         return self.pixels[column][row]
 
     def getPixels(self):
         """
-        Returns all pixels as a list of lists.
-        """
+    Returns all pixels as a list of lists.
+    """
         return self.pixels
 
     def getAsciiString(self):
         """
-        Renders the data item as an ascii image.
-        """
+    Renders the data item as an ascii image.
+    """
         rows = []
         data = util.arrayInvert(self.pixels)
         for row in data:
@@ -95,10 +88,10 @@ class Datum:
 
 def loadDataFile(filename, n, width, height):
     """
-    Reads n data images from a file and returns a list of Datum objects.
+  Reads n data images from a file and returns a list of Datum objects.
 
-    (Return less then n items if the end of file is encountered).
-    """
+  (Return less then n items if the end of file is encountered).
+  """
     DATUM_WIDTH = width
     DATUM_HEIGHT = height
     fin = readlines(filename)
@@ -132,8 +125,8 @@ def readlines(filename):
 
 def loadLabelsFile(filename, n):
     """
-    Reads n labels from a file and returns a list of integers.
-    """
+  Reads n labels from a file and returns a list of integers.
+  """
     fin = readlines(filename)
     labels = []
     for line in fin[:min(n, len(fin))]:
@@ -145,8 +138,8 @@ def loadLabelsFile(filename, n):
 
 def asciiGrayscaleConversionFunction(value):
     """
-    Helper function for display purposes.
-    """
+  Helper function for display purposes.
+  """
     if (value == 0):
         return ' '
     elif (value == 1):
@@ -157,20 +150,20 @@ def asciiGrayscaleConversionFunction(value):
 
 def IntegerConversionFunction(character):
     """
-    Helper function for file reading.
-    """
+  Helper function for file reading.
+  """
     if (character == ' '):
         return 0
     elif (character == '+'):
         return 1
     elif (character == '#'):
-        return 1
+        return 2
 
 
 def convertToInteger(data):
     """
-    Helper function for file reading.
-    """
+  Helper function for file reading.
+  """
     if type(data) != type([]):
         return IntegerConversionFunction(data)
     else:
@@ -182,20 +175,20 @@ def convertToInteger(data):
 def _test():
     import doctest
     doctest.testmod()  # Test the interactive sessions in function comments
-    n = 10
+    n = 1
     #  items = loadDataFile("facedata/facedatatrain", n,60,70)
     #  labels = loadLabelsFile("facedata/facedatatrainlabels", n)
     items = loadDataFile("digitdata/trainingimages", n, 28, 28)
     labels = loadLabelsFile("digitdata/traininglabels", n)
-    for i in range(n):
+    for i in range(1):
+        print items[i]
         print items[i]
         print(items[i].height)
         print(items[i].width)
         print dir(items[i])
         print items[i].getPixels()
-      #  print(items[i].pixels[7][7])
-        #print items[i].getAsciiString()
 
 
 if __name__ == "__main__":
     _test()
+
