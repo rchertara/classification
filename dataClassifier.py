@@ -9,7 +9,7 @@
 # This file contains feature extraction methods and harness 
 # code for data classification
 
-import mostFrequent
+import kMeans
 import naiveBayes
 import perceptron
 import mira
@@ -18,8 +18,8 @@ import sys
 import util
 
 
-TRAIN_SET_SIZE=450
-TEST_SET_SIZE = 100 #IMPORTANT#
+TRAIN_SET_SIZE=100
+TEST_SET_SIZE =100 #IMPORTANT#
 DIGIT_DATUM_WIDTH=28
 DIGIT_DATUM_HEIGHT=28
 FACE_DATUM_WIDTH=60
@@ -167,7 +167,7 @@ def readCommand( argv ):
   from optparse import OptionParser  
   parser = OptionParser(USAGE_STRING)
   
-  parser.add_option('-c', '--classifier', help=default('The type of classifier'), choices=['mostFrequent', 'nb', 'naiveBayes', 'perceptron', 'mira', 'minicontest'], default='mostFrequent')
+  parser.add_option('-c', '--classifier', help=default('The type of classifier'), choices=['kmeans', 'nb', 'naiveBayes', 'perceptron', 'mira', 'minicontest'], default='naiveBayes')
   parser.add_option('-d', '--data', help=default('Dataset to use'), choices=['digits', 'faces'], default='digits')
   parser.add_option('-t', '--training', help=default('The size of the training set'), default=TRAIN_SET_SIZE, type="int")
   parser.add_option('-f', '--features', help=default('Whether to use enhanced features'), default=False, action="store_true")
@@ -234,8 +234,8 @@ def readCommand( argv ):
       print (USAGE_STRING)
       sys.exit(2)
 
-  if(options.classifier == "mostFrequent"):
-    classifier = mostFrequent.MostFrequentClassifier(legalLabels)
+  if(options.classifier == "kmeans"):
+    classifier = kMeans.KMeansClassifier(legalLabels)
   elif(options.classifier == "naiveBayes" or options.classifier == "nb"):
     classifier = naiveBayes.NaiveBayesClassifier(legalLabels)
     classifier.setSmoothing(options.smoothing)
