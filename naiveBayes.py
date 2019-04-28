@@ -62,14 +62,23 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
 
     """
 
+    #NEED TO FIX FOR FACES
+
     self.classProb={}
     self.classOccurence={}
     self.allFeaturesProb = {}
     numOfClasses=0
+    pixelWidth=0
+    pixelHeight=0
     if(options=='digits'):
       numOfClasses=10
+      pixelHeight=28
+      pixelWidth=28
+
     else:
       numOfClasses=2
+      pixelHeight=70
+      pixelWidth=60
 
     occur=0
     for digit in range(numOfClasses):
@@ -84,8 +93,8 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     occurOfOne=0
     for digit in range(numOfClasses):#for each class
       self.allFeaturesProb[digit] = {}
-      for x in range(28): #each (x,y) is a feature
-        for y in range(28):
+      for x in range(pixelWidth): #each (x,y) is a feature
+        for y in range(pixelHeight):
           for z in range(len(trainingLabels)):#check to see if image we are on is in the class
             if(trainingLabels[z]==digit):
               image=trainingData[z]#get that specific image
@@ -125,20 +134,26 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     self.legalLabels.
     """
     logJoint = util.Counter()
-    numOfclasses=0
-    #CANT HAVE LOGS OF ZERO
-    if(options=='digits'):
-      numOfclasses=10;
+    numOfClasses = 0
+    pixelWidth = 0
+    pixelHeight = 0
+    if (options == 'digits'):
+      numOfClasses = 10
+      pixelHeight = 28
+      pixelWidth = 28
+
     else:
-      numOfclasses=2;
+      numOfClasses = 2
+      pixelHeight = 70
+      pixelWidth = 60
 
     self.k=.01 #this is so far best choice for k idk why
 
     #NEED HELP WITH THIS NEED TO SET K correctly and confirm math
-    for digit in range(numOfclasses):
+    for digit in range(numOfClasses):
       probOfClassAndFeature=math.log(self.classProb[digit]+self.k)
-      for x in range(28):
-        for y in range(28):
+      for x in range(pixelWidth):
+        for y in range(pixelHeight):
           if(datum.get((x,y))==1):
             probOfClassAndFeature+=math.log(self.allFeaturesProb[digit][(x,y)]+self.k)
           else:

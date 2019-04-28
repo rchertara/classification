@@ -42,7 +42,7 @@ class KMeansClassifier(classificationMethod.ClassificationMethod):
     # self.guess = counter.argMax()
     self.trainData=data
     self.trainLabels=labels
-    self.k=.03*len(data) #k amount of iterations or neighbors in this case
+    self.k=11 #k amount of iterations or neighbors in this case
 
     #i think i can skip train?
   def classify(self, testData,options):
