@@ -55,6 +55,16 @@ class KMeansClassifier(classificationMethod.ClassificationMethod):
     #an object to hold the vector?(dont think i need this),label, its distance to feature vector
     #finally iterate thru collection and tally up the amount of votes for each label
 
+    pixelWidth = 0
+    pixelHeight = 0
+    if (options == 'digits'):
+      pixelHeight = 28
+      pixelWidth = 28
+
+    else:
+      pixelHeight = 70
+      pixelWidth = 60
+
     guesses=[]
     for i in range(len(testData)):
       testImage=testData[i]#for each test image loop thru all train images to see which is closet to determine class
@@ -63,8 +73,8 @@ class KMeansClassifier(classificationMethod.ClassificationMethod):
         trainImage=self.trainData[j]
         trainLabel=self.trainLabels[j]
         distance=0
-        for x in range(28):#For each feature (x,y) coordinate pixel
-          for y in range(28):
+        for x in range(pixelWidth):#For each feature (x,y) coordinate pixel
+          for y in range(pixelHeight):
             featTrainVal=trainImage.get((x,y))
             featTestVal =testImage.get((x, y))
             distance+=(featTrainVal-featTestVal)**2
