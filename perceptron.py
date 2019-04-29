@@ -49,7 +49,15 @@ class PerceptronClassifier:
       print ("Starting iteration ", iteration, "...")
       for i in range(len(trainingData)):
           "*** YOUR CODE HERE ***"
-          util.raiseNotDefined()
+          prediction = util.Counter()
+          # Multiply trading data with corresponding weight
+          for label in self.legalLabels:  # 1-9
+            prediction[label] = trainingData[i] * self.weights[label]
+
+          # Compare max prediction value with true label.
+          if prediction.argMax() != trainingLabels[i]:
+            self.weights[prediction.argMax()] -= trainingData[i]
+            self.weights[trainingLabels[i]] += trainingData[i]
     
   def classify(self, data ):
     """
