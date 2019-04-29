@@ -29,7 +29,7 @@ class PerceptronClassifier:
     assert len(weights) == len(self.legalLabels);
     self.weights == weights;
       
-  def train( self, trainingData, trainingLabels, validationData, validationLabels ):
+  def train( self, trainingData, trainingLabels, validationData, validationLabels ,options ):
     """
     The training loop for the perceptron passes through the training data several
     times and updates the weight vector for each label based on classification errors.
@@ -59,7 +59,7 @@ class PerceptronClassifier:
             self.weights[prediction.argMax()] -= trainingData[i]
             self.weights[trainingLabels[i]] += trainingData[i]
     
-  def classify(self, data ):
+  def classify(self, data, option ):
     """
     Classifies each datum as the label that most closely matches the prototype vector
     for that label.  See the project description for details.
