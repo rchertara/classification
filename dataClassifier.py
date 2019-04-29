@@ -17,6 +17,7 @@ import samples
 import sys
 import util
 import numpy as np
+import time
 
 TRAIN_SET_SIZE=150
 TEST_SET_SIZE =150 #IMPORTANT#
@@ -136,8 +137,8 @@ def enhancedFeatureExtractorFace(datum):
 
   # features =  basicFeatureExtractorFace(datum)
 
-  #blockshaped(smallerROWSize  ,  smallerColumnSize  , productfor70  , productFor60)
-  return blockshaped(7,5,10,12,60, 70,datum ,"f")
+  #blockshaped(smallerROWSize  ,  smallerColumnSize  , productfor70  , productFor60 , datum, type)
+  return blockshaped(7,  6, 10,  10,   60, 70, datum , "f")
 
 def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage):
   """
@@ -374,7 +375,10 @@ def runClassifier(args, options):
   
   # Conduct training and testing
   print ("Training...")
+  start = time.time()
   classifier.train(trainingData, trainingLabels, validationData, validationLabels, options.data)
+  end = time.time()
+  print("Time_To_Train:  ", end - start)
   print ("Validating...")
   guesses = classifier.classify(validationData,options.data)
   correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
