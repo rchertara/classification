@@ -18,8 +18,8 @@ import sys
 import util
 import numpy as np
 
-TRAIN_SET_SIZE=100
-TEST_SET_SIZE =100 #IMPORTANT#
+TRAIN_SET_SIZE=150
+TEST_SET_SIZE =150 #IMPORTANT#
 DIGIT_DATUM_WIDTH=28
 DIGIT_DATUM_HEIGHT=28
 FACE_DATUM_WIDTH=60
@@ -88,7 +88,7 @@ def sumAll(input):
   return sum(map(sum, input))
 
 
-def blockshaped(arr, nrows, ncols, maxRows, maxCols, datum):
+def blockshaped( nrows, ncols, maxRows, maxCols, datum):
   """
   Return an array of shape (n, nrows, ncols) where
   n * nrows * ncols = arr.size
@@ -96,22 +96,21 @@ def blockshaped(arr, nrows, ncols, maxRows, maxCols, datum):
   If arr is a 2D array, the returned array should look like n subblocks with
   each subblock preserving the "physical" layout of arr.
   """
-  a = datum.getPixels()
 
-  features = util.Counter()
 
-  h, w = arr.shape
-  index = (arr.reshape(h // nrows, nrows, -1, ncols)
+  features = basicFeatureExtractorFace(datum)
+
+  h, w = features.shape
+  index = (features.reshape(h // nrows, nrows, -1, ncols)
            .swapaxes(1, 2)
            .reshape(-1, nrows, ncols))
-
-  print index
+  features2 = util.Counter()
   i =0;
   for x in range(maxCols):
     for y in range(maxRows):
-      features[(x, y)] = sumAll(index[i])
+      features2[(x, y)] = sumAll(index[i])
       i += 1
-  return sumAll(index[7])
+  return features2
 
 def enhancedFeatureExtractorFace(datum):
   """
@@ -123,8 +122,8 @@ def enhancedFeatureExtractorFace(datum):
   # features = util.Counter()
 
 
-  features =  basicFeatureExtractorFace(datum)
-  return features
+  # features =  basicFeatureExtractorFace(datum)
+  return blockshaped(14,12,5,5,datum)
 
 def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage):
   """

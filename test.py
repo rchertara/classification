@@ -1,5 +1,7 @@
 import numpy as np
-
+import util
+import classificationMethod
+import math
 
 def sumAll(input):
     return sum(map(sum, input))
@@ -21,12 +23,12 @@ def blockshaped(arr, nrows, ncols):
     #     if (== 0):
     # print
     # return sumAll(index[7])
-    return index
+    return index [0]
 
 c = np.arange(4200).reshape((70,60))
-print(c )
+print(c)
 
-print (blockshaped(c, 2, 4))
+print (blockshaped(c, 14, 12))
 # print()
 
 
