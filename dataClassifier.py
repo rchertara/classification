@@ -16,7 +16,7 @@ import mira
 import samples
 import sys
 import util
-
+import numpy as np
 
 TRAIN_SET_SIZE=100
 TEST_SET_SIZE =100 #IMPORTANT#
@@ -83,11 +83,46 @@ def contestFeatureExtractorDigit(datum):
   features =  basicFeatureExtractorDigit(datum)
   return features
 
+
+def sumAll(input):
+  return sum(map(sum, input))
+
+
+def blockshaped(arr, nrows, ncols, maxRows, maxCols, datum):
+  """
+  Return an array of shape (n, nrows, ncols) where
+  n * nrows * ncols = arr.size
+
+  If arr is a 2D array, the returned array should look like n subblocks with
+  each subblock preserving the "physical" layout of arr.
+  """
+  a = datum.getPixels()
+
+  features = util.Counter()
+
+  h, w = arr.shape
+  index = (arr.reshape(h // nrows, nrows, -1, ncols)
+           .swapaxes(1, 2)
+           .reshape(-1, nrows, ncols))
+
+  print index
+  i =0;
+  for x in range(maxCols):
+    for y in range(maxRows):
+      features[(x, y)] = sumAll(index[i])
+      i += 1
+  return sumAll(index[7])
+
 def enhancedFeatureExtractorFace(datum):
   """
   Your feature extraction playground for faces.
   It is your choice to modify this.
   """
+  # a = datum.getPixels()
+  #
+  # features = util.Counter()
+
+
   features =  basicFeatureExtractorFace(datum)
   return features
 
@@ -326,7 +361,7 @@ def runClassifier(args, options):
   
   # Conduct training and testing
   print ("Training...")
-  classifier.train(trainingData, trainingLabels, validationData, validationLabels,options.data)
+  classifier.train(trainingData, trainingLabels, validationData, validationLabels, options.data)
   print ("Validating...")
   guesses = classifier.classify(validationData,options.data)
   correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
