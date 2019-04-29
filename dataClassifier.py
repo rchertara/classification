@@ -69,11 +69,11 @@ def enhancedFeatureExtractorDigit(datum):
   
   ##
   """
-  features =  basicFeatureExtractorDigit(datum)
+  # features =  basicFeatureExtractorDigit(datum)
 
   "*** YOUR CODE HERE ***"
   
-  return features
+  return  blockshaped(2,2,14,14,28, 28,datum,"d")
 
 
 def contestFeatureExtractorDigit(datum):
@@ -88,7 +88,7 @@ def sumAll(input):
   return sum(map(sum, input))
 
 
-def blockshaped( nrows, ncols, maxRows, maxCols, datum):
+def blockshaped( nrows, ncols, maxRows, maxCols, normalCol, NormalRows, datum , type):
   """
   Return an array of shape (n, nrows, ncols) where
   n * nrows * ncols = arr.size
@@ -97,27 +97,30 @@ def blockshaped( nrows, ncols, maxRows, maxCols, datum):
   each subblock preserving the "physical" layout of arr.
   """
 
-
-  features = basicFeatureExtractorFace(datum)
+  if type == "f":
+    features = basicFeatureExtractorFace(datum)
+  else:
+    features = basicFeatureExtractorDigit(datum)
   a=[]
-  for x in range(60):
-    for y in  range(70):
+  for x in range(normalCol):
+    for y in  range(NormalRows):
       a.append(features.get((x,y)))
 
   y = np.array(a)
-  convert2d = np.reshape(y, (70,60))
+  convert2d = np.reshape(y, (NormalRows,normalCol))
 
   h, w = convert2d.shape
   index = (convert2d.reshape(h // nrows, nrows, -1, ncols)
            .swapaxes(1, 2)
            .reshape(-1, nrows, ncols))
 
-  print len(index)
+  # print len(index)
   features2 = util.Counter()
 
   i =0;
   for x in range(maxRows):
     for y in range(maxCols):
+      print sumAll(index[i])
       features2[(x, y)] = sumAll(index[i])
       i += 1
   return features2
@@ -134,7 +137,7 @@ def enhancedFeatureExtractorFace(datum):
   # features =  basicFeatureExtractorFace(datum)
 
   #blockshaped(smallerROWSize  ,  smallerColumnSize  , productfor70  , productFor60)
-  return blockshaped(7,5,10,12,datum)
+  return blockshaped(7,5,10,12,60, 70,datum ,"f")
 
 def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage):
   """
