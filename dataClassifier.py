@@ -99,15 +99,25 @@ def blockshaped( nrows, ncols, maxRows, maxCols, datum):
 
 
   features = basicFeatureExtractorFace(datum)
+  a=[]
+  for x in range(60):
+    for y in  range(70):
+      a.append(features.get((x,y)))
 
-  h, w = features.shape
-  index = (features.reshape(h // nrows, nrows, -1, ncols)
+  y = np.array(a)
+  convert2d = np.reshape(y, (70,60))
+
+  h, w = convert2d.shape
+  index = (convert2d.reshape(h // nrows, nrows, -1, ncols)
            .swapaxes(1, 2)
            .reshape(-1, nrows, ncols))
+
+  print len(index)
   features2 = util.Counter()
+
   i =0;
-  for x in range(maxCols):
-    for y in range(maxRows):
+  for x in range(maxRows):
+    for y in range(maxCols):
       features2[(x, y)] = sumAll(index[i])
       i += 1
   return features2
@@ -121,9 +131,10 @@ def enhancedFeatureExtractorFace(datum):
   #
   # features = util.Counter()
 
-
   # features =  basicFeatureExtractorFace(datum)
-  return blockshaped(14,12,5,5,datum)
+
+  #blockshaped(smallerROWSize  ,  smallerColumnSize  , productfor70  , productFor60)
+  return blockshaped(7,5,10,12,datum)
 
 def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage):
   """
