@@ -29,7 +29,7 @@ class PerceptronClassifier:
     assert len(weights) == len(self.legalLabels);
     self.weights == weights;
       
-  def train( self, trainingData, trainingLabels, validationData, validationLabels ):
+  def train( self, trainingData, trainingLabels, validationData, validationLabels,options ):
     """
     The training loop for the perceptron passes through the training data several
     times and updates the weight vector for each label based on classification errors.
@@ -42,16 +42,31 @@ class PerceptronClassifier:
     """
     
     self.features = trainingData[0].keys() # could be useful later
+
+
     # DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
     # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
     
     for iteration in range(self.max_iterations):
       print ("Starting iteration ", iteration, "...")
       for i in range(len(trainingData)):
-          "*** YOUR CODE HERE ***"
-          util.raiseNotDefined()
+        label=trainingLabels[i]
+        vector=trainingData[i]
+        allClassesPrediction=util.Counter()
+        for l in self.legalLabels:
+          allClassesPrediction[l]=(vector*self.weights[l])#EACH FEATURE HAS OWN WEIGHT so do DOT PROD with mul
+        predClass=allClassesPrediction.argMax()
+        if(label==predClass):
+          continue
+        else:
+          self.weights[predClass]-=vector
+          self.weights[label]+=vector
+
+
+
+
     
-  def classify(self, data ):
+  def classify(self, data,options ):
     """
     Classifies each datum as the label that most closely matches the prototype vector
     for that label.  See the project description for details.
