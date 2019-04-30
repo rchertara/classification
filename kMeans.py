@@ -42,8 +42,10 @@ class KMeansClassifier(classificationMethod.ClassificationMethod):
     # self.guess = counter.argMax()
     self.trainData=data
     self.trainLabels=labels
-    self.k=.011*len(data) #k amount of iterations or neighbors in this case
-
+    if(options=="faces"):
+      self.k=.25*len(data) #k amount of neighbors to compare similarity! THIS IS CRUCIAL idk why a bigger k for faces works better
+    else:
+      self.k=3 #for digits a smaller k works the best! basically finding the most similar thing it looks like is best choice lol
     #i think i can skip train?
   def classify(self, testData,options):
     """
@@ -54,6 +56,14 @@ class KMeansClassifier(classificationMethod.ClassificationMethod):
     # [self.guess for i in testData]
     #an object to hold the vector?(dont think i need this),label, its distance to feature vector
     #finally iterate thru collection and tally up the amount of votes for each label
+    xRange=0
+    yRange=0
+    if(options=="faces"):
+      xRange=10
+      yRange=10
+    else:
+      xRange=7
+      yRange=7
 
     guesses=[]
     for i in range(len(testData)):
@@ -63,8 +73,8 @@ class KMeansClassifier(classificationMethod.ClassificationMethod):
         trainImage=self.trainData[j]
         trainLabel=self.trainLabels[j]
         distance=0
-        for x in range(28):#For each feature (x,y) coordinate pixel
-          for y in range(28):
+        for x in range(xRange):#For each feature (x,y) coordinate pixel
+          for y in range(yRange):
             featTrainVal=trainImage.get((x,y))
             featTestVal =testImage.get((x, y))
             distance+=(featTrainVal-featTestVal)**2

@@ -19,7 +19,7 @@ import util
 import numpy as np
 import time
 
-TRAIN_SET_SIZE=150
+TRAIN_SET_SIZE=450
 TEST_SET_SIZE =150 #IMPORTANT#
 DIGIT_DATUM_WIDTH=28
 DIGIT_DATUM_HEIGHT=28
@@ -74,7 +74,7 @@ def enhancedFeatureExtractorDigit(datum):
 
   "*** YOUR CODE HERE ***"
   
-  return  blockshaped(2,2,14,14,28, 28,datum,"d")
+  return  blockshaped(4,4,7,7,28, 28,datum,"d")
 
 
 def contestFeatureExtractorDigit(datum):
@@ -87,6 +87,8 @@ def contestFeatureExtractorDigit(datum):
 
 def sumAll(input):
   return sum(map(sum, input))
+
+
 
 
 def blockshaped( nrows, ncols, maxRows, maxCols, normalCol, NormalRows, datum , type):
@@ -121,7 +123,7 @@ def blockshaped( nrows, ncols, maxRows, maxCols, normalCol, NormalRows, datum , 
   i =0;
   for x in range(maxRows):
     for y in range(maxCols):
-      print sumAll(index[i])
+      #print sumAll(index[i])
       features2[(x, y)] = sumAll(index[i])
       i += 1
   return features2
