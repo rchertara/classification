@@ -414,7 +414,7 @@ def runClassifier(args, options):
   if(options.percentage<=100):
     p=options.percentage/100
     k = int((len(rawTrainingData) * p))
-    indicies = random.sample(xrange(len(rawTrainingData)-1), k)
+    indicies = random.sample(xrange(len(rawTrainingData)-1), k-1)
     rawTrainingData = [rawTrainingData[i] for i in indicies]
     trainingLabels=[trainingLabels[i]for i in indicies]
 
@@ -461,8 +461,8 @@ def runClassifier(args, options):
   analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
 
   f.write(" Percantage of train used: (%f) " % options.percentage)
-  f.write(" Prediction Accuracy on test: %f%%\n" % ( 0+ (100.0 * (float(correct) / float(len(testLabels))))))
-
+  f.write(" Prediction Accuracy on test: %f%% " % ( 0+ (100.0 * (float(correct) / float(len(testLabels))))))
+  f.write(" Dataset: %s\n" % options.data)
   f.close()
 
  # print "Percent Prediction Error: %d%%" % (100.0 - (100.0 * (float(correct) / float(len(testLabels)))))

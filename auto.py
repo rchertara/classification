@@ -3,7 +3,7 @@ import os
 def callBasedOnClassifier(classifier):
     if classifier == "knear":
         classifier = classifier+" -f"
-
+        doCalls(classifier)
     else:
         doCalls(classifier)
 
@@ -29,4 +29,4 @@ for c in classifiers:
     f = open('log.txt','a')
     f.write(c + " ")
     f.close()
-    callBasedOnClassifier(c)
+    callBasedOnClassifier("c")
