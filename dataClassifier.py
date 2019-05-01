@@ -9,7 +9,7 @@
 # This file contains feature extraction methods and harness 
 # code for data classification
 
-import kMeans
+import kNearest
 import naiveBayes
 import perceptron
 import mira
@@ -18,9 +18,24 @@ import sys
 import util
 import numpy as np
 import time
+import random
+import math
 
-TRAIN_SET_SIZE=450
-TEST_SET_SIZE =150 #IMPORTANT#
+
+RANDOM_PERCENT=.10#Amount of train data to use
+
+#these are mumber of images for digits
+TRAIN_SET_SIZE=1000
+TEST_SET_SIZE =1000
+
+#number of images for faces data
+# TRAIN_SET_SIZE=450
+# TEST_SET_SIZE =150
+
+
+
+
+
 DIGIT_DATUM_WIDTH=28
 DIGIT_DATUM_HEIGHT=28
 FACE_DATUM_WIDTH=60
@@ -243,7 +258,7 @@ def readCommand( argv ):
   from optparse import OptionParser  
   parser = OptionParser(USAGE_STRING)
   
-  parser.add_option('-c', '--classifier', help=default('The type of classifier'), choices=['kmeans', 'nb', 'naiveBayes', 'perceptron', 'mira', 'minicontest'], default='naiveBayes')
+  parser.add_option('-c', '--classifier', help=default('The type of classifier'), choices=['knear', 'nb', 'naiveBayes', 'perceptron', 'mira', 'minicontest'], default='naiveBayes')
   parser.add_option('-d', '--data', help=default('Dataset to use'), choices=['digits', 'faces'], default='digits')
   parser.add_option('-t', '--training', help=default('The size of the training set'), default=TRAIN_SET_SIZE, type="int")
   parser.add_option('-f', '--features', help=default('Whether to use enhanced features'), default=False, action="store_true")
@@ -310,8 +325,8 @@ def readCommand( argv ):
       print (USAGE_STRING)
       sys.exit(2)
 
-  if(options.classifier == "kmeans"):
-    classifier = kMeans.KMeansClassifier(legalLabels)
+  if(options.classifier == "knear"):
+    classifier = kNearest.KNearestClassifier(legalLabels)
   elif(options.classifier == "naiveBayes" or options.classifier == "nb"):
     classifier = naiveBayes.NaiveBayesClassifier(legalLabels)
     classifier.setSmoothing(options.smoothing)
@@ -394,6 +409,14 @@ def runClassifier(args, options):
   
   # Extract features
   print ("Extracting features...")
+  if(RANDOM_PERCENT<1):
+    k = int((len(rawTrainingData) * RANDOM_PERCENT))
+    indicies = random.sample(xrange(len(rawTrainingData)-1), k)
+    rawTrainingData = [rawTrainingData[i] for i in indicies]
+    trainingLabels=[trainingLabels[i]for i in indicies]
+
+
+
   trainingData = map(featureFunction, rawTrainingData)
   validationData = map(featureFunction, rawValidationData)
   #mergedData=map(featureFunction,mergedData)
@@ -406,12 +429,23 @@ def runClassifier(args, options):
   classifier.train(trainingData, trainingLabels, validationData, validationLabels, options.data)
   end = time.time()
   print("Time_To_Train:  ", end - start)
+
   print ("Validating...")
+  start = time.time()
   guesses = classifier.classify(validationData,options.data)
+  end = time.time()
+  print("Time_To_Classify:  ", end - start)
+
   correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
   print (str(correct), ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels)))
+
   print ("Testing...")
+
+  start = time.time()
   guesses = classifier.classify(testData,options.data)
+  end = time.time()
+
+  print("Time_To_Test:  ", end - start)
   correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
   print (str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * correct / len(testLabels)))
   analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)

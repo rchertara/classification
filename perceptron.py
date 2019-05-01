@@ -51,7 +51,7 @@ class PerceptronClassifier:
           "*** YOUR CODE HERE ***"
           prediction = util.Counter()
           # Multiply trading data with corresponding weight
-          for label in self.legalLabels:  # 1-9
+          for label in self.legalLabels:  # 1-9 or face or not face
             prediction[label] = trainingData[i] * self.weights[label]
 
           # Compare max prediction value with true label.

@@ -1,4 +1,4 @@
-# kMeans.py
+# kNearest.py
 # ---------------
 # Licensing Information: Please do not distribute or publish solutions to this
 # project. You are free to use and extend these projects for educational
@@ -21,7 +21,7 @@ def guessFromKNearest(AllNeighbors,k):
   return classVotes.argMax()
 
 
-class KMeansClassifier(classificationMethod.ClassificationMethod):
+class KNearestClassifier(classificationMethod.ClassificationMethod):
   """
   The  is a very simple classifier: for
   every test instance presented to it, the classifier returns
