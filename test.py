@@ -23,12 +23,39 @@ def blockshaped(arr, nrows, ncols):
     #     if (== 0):
     # print
     # return sumAll(index[7])
-    return index [0]
+    return index
 
-c = np.arange(4200).reshape((70,60))
+# a = []
+# for i in xrange(10):
+#     a.append([])
+#     for j in xrange(10):
+#             a[i].append(i+j)
+#
+# # print(a)
+# data = [1,3,4,5,6,7,8,9]
+# y = np.array(data)
+# c = np.reshape(data, (4,2))
+# print(len(c))\
+
+# 6 col, 4 rows
+c = np.arange(24).reshape((4,6))
 print(c)
+arrayCount = []
+# arrayCount.append(5)
+print arrayCount
 
-print (blockshaped(c, 14, 12))
+row_pixel_count = 0
+for x in range(6):
+    row_pixel_count = 0
+    for y in range(4):
+        if c[y, x] > 0:
+            row_pixel_count += 1
+        if (y == 4 -1):
+            arrayCount.append(row_pixel_count)
+            row_pixel_count = 0
+
+print arrayCount
+# print (blockshaped(c, 4, 2))
 # print()
 
 

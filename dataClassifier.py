@@ -97,20 +97,66 @@ def blockshaped( nrows, ncols, maxRows, maxCols, datum):
   each subblock preserving the "physical" layout of arr.
   """
 
-
+  a = []
+  cot = 0
   features = basicFeatureExtractorFace(datum)
+  for x in range(60):  # For each feature (x,y) coordinate pixel
+      for y in range(70):
+          cot +=1
+          # print features.get((x, y))
+          # a.append(features.get((y, x)))
+          a.append(features.get((x, y)))
 
-  h, w = features.shape
-  index = (features.reshape(h // nrows, nrows, -1, ncols)
+  # print ("********************************Cot : \n", cot)
+  y = np.array(a)
+  # print y
+  twoD= np.reshape(a, (70,60))
+  # print twoD
+  h, w = twoD.shape
+  index = (twoD.reshape(h // nrows, nrows, -1, ncols)
            .swapaxes(1, 2)
            .reshape(-1, nrows, ncols))
+  print ( len(index))
+  print index[0]
+  list = index.tolist()
   features2 = util.Counter()
+  # features2[(0, 0
+  # )] = 1
+  # print list.pop()
   i =0;
   for x in range(maxCols):
     for y in range(maxRows):
+      # print list[x][y]
+      # features2[(x, y)] = list[x][y]
       features2[(x, y)] = sumAll(index[i])
       i += 1
+
   return features2
+
+def countRowFeature(Size_Row, Size_Col, datum):
+  pixelPerRow = util.Counter()
+  row_pixel_count = 0
+  for x in range(Size_Row):
+    row_pixel_count = 0
+    for y in range(Size_Col):
+      if datum.getPixel(x, y) > 0:
+        row_pixel_count +=1
+      if(Size_Col-1):
+        pixelPerRow[x] = row_pixel_count
+        row_pixel_count = 0
+  return pixelPerRow
+
+def countColFeature(Size_Row, Size_Col, datum):
+  pixelPerCol = util.Counter()
+  for x in range(Size_Col):
+    col_pixel_count = 0
+    for y in range(Size_Row):
+      if datum.getPixel(y, x) > 0:
+        col_pixel_count += 1
+      if (Size_Row - 1):
+        pixelPerCol[x] = col_pixel_count
+        col_pixel_count = 0
+  return pixelPerCol
 
 def enhancedFeatureExtractorFace(datum):
   """
@@ -123,7 +169,7 @@ def enhancedFeatureExtractorFace(datum):
 
 
   # features =  basicFeatureExtractorFace(datum)
-  return blockshaped(14,12,5,5,datum)
+  return blockshaped(2,2,30,35,datum)
 
 def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage):
   """
