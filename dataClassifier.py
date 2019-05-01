@@ -270,6 +270,7 @@ def readCommand( argv ):
   parser.add_option('-a', '--autotune', help=default("Whether to automatically tune hyperparameters"), default=False, action="store_true")
   parser.add_option('-i', '--iterations', help=default("Maximum iterations to run training"), default=3, type="int")
   parser.add_option('-s', '--test', help=default("Amount of test data to use"), default=TEST_SET_SIZE, type="int")
+  parser.add_option('-p', '--percentage', help=default("Amount of test data to use"), default=10, type="float")
 
   options, otherjunk = parser.parse_args(argv)
   if len(otherjunk) != 0: raise Exception('Command line input not understood: ' + str(otherjunk))
@@ -318,7 +319,8 @@ def readCommand( argv ):
     print ("Please provide a positive number for smoothing (you provided: %f)" % options.smoothing)
     print (USAGE_STRING)
     sys.exit(2)
-    
+
+
   if options.odds:
     if options.label1 not in legalLabels or options.label2 not in legalLabels:
       print ("Didn't provide a legal labels for the odds ratio: (%d,%d)" % (options.label1, options.label2))
@@ -409,8 +411,9 @@ def runClassifier(args, options):
   
   # Extract features
   print ("Extracting features...")
-  if(RANDOM_PERCENT<1):
-    k = int((len(rawTrainingData) * RANDOM_PERCENT))
+  if(options.percentage<=100):
+    p=options.percentage/100
+    k = int((len(rawTrainingData) * p))
     indicies = random.sample(xrange(len(rawTrainingData)-1), k)
     rawTrainingData = [rawTrainingData[i] for i in indicies]
     trainingLabels=[trainingLabels[i]for i in indicies]
@@ -424,17 +427,22 @@ def runClassifier(args, options):
   testData = map(featureFunction, rawTestData)
   
   # Conduct training and testing
+  f = open('log.txt', 'a')
+
   print ("Training...")
   start = time.time()
   classifier.train(trainingData, trainingLabels, validationData, validationLabels, options.data)
   end = time.time()
   print("Time_To_Train:  ", end - start)
+  f.write("Time_To_Train: %f  " %((end - start)))
 
   print ("Validating...")
   start = time.time()
   guesses = classifier.classify(validationData,options.data)
   end = time.time()
+
   print("Time_To_Classify:  ", end - start)
+  f.write("Time_To_Classify: %f " % ((end - start)))
 
   correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
   print (str(correct), ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels)))
@@ -446,10 +454,19 @@ def runClassifier(args, options):
   end = time.time()
 
   print("Time_To_Test:  ", end - start)
+  f.write("Time_To_Test: %f " % ((end - start)))
+
   correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
   print (str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * correct / len(testLabels)))
   analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
-  
+
+  f.write(" Percantage of train used: (%f) " % options.percentage)
+  f.write(" Prediction Accuracy on test: %f%%\n" % ( 0+ (100.0 * (float(correct) / float(len(testLabels))))))
+
+  f.close()
+
+ # print "Percent Prediction Error: %d%%" % (100.0 - (100.0 * (float(correct) / float(len(testLabels)))))
+
   # do odds ratio computation if specified at command line
   if((options.odds) & (options.classifier == "naiveBayes" or (options.classifier == "nb")) ):
     label1, label2 = options.label1, options.label2
