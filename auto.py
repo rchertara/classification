@@ -20,7 +20,7 @@ def doCalls(classifier):
         y = y + 10
 
 
-classifiers = ["naiveBayes","perceptron","knear"]
+classifiers = ["perceptron"]
 
 #overwrite existing log.txt
 f = open('log.txt','w')
@@ -29,4 +29,4 @@ for c in classifiers:
     f = open('log.txt','a')
     f.write(c + " ")
     f.close()
-    callBasedOnClassifier("c")
+    callBasedOnClassifier(c)
